@@ -24,43 +24,47 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     {
       name: 'Dashboard',
       icon: LayoutDashboard,
-      path: '/dashboard',
+      path: currentUser?.role === 'admin' 
+        ? '/admin/dashboard'
+        : currentUser?.role === 'manager'
+        ? '/manager/dashboard'
+        : '/employee/dashboard',
       roles: ['admin', 'manager', 'employee'],
     },
     {
       name: 'Submit Expense',
       icon: Receipt,
-      path: '/expenses/submit',
+      path: '/employee/submit-expense',
       roles: ['employee'],
     },
     {
       name: 'My Expenses',
       icon: FileText,
-      path: '/expenses',
+      path: '/employee/expenses',
       roles: ['employee'],
     },
     {
       name: 'Pending Approvals',
       icon: CheckSquare,
-      path: '/approvals',
+      path: '/manager/approvals',
       roles: ['manager', 'admin'],
     },
     {
       name: 'Team Expenses',
       icon: DollarSign,
-      path: '/team-expenses',
+      path: '/manager/team-expenses',
       roles: ['manager'],
     },
     {
       name: 'All Expenses',
       icon: DollarSign,
-      path: '/all-expenses',
+      path: '/admin/expenses',
       roles: ['admin'],
     },
     {
       name: 'User Management',
       icon: Users,
-      path: '/users',
+      path: '/admin/users',
       roles: ['admin'],
     },
     {
@@ -99,7 +103,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-dark-card border-r border-dark-border transform transition-transform duration-200 ease-in-out lg:translate-x-0 ${
+        className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-gray-800/70 border-r border-gray-700/50 transform transition-transform duration-200 ease-in-out lg:translate-x-0 backdrop-blur-lg ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -111,10 +115,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 to={item.path}
                 onClick={onClose}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                  `flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
                     isActive
-                      ? 'bg-primary text-white'
-                      : 'text-gray-400 hover:text-white hover:bg-dark-hover'
+                      ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/30'
+                      : 'text-gray-400 hover:text-white hover:bg-gray-700/50 hover:scale-105'
                   }`
                 }
               >

@@ -86,14 +86,15 @@ export const AdminDashboard: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-white">Admin Dashboard</h1>
-        <p className="text-gray-400 mt-1">Overview of your expense management system</p>
+      <div className="relative">
+        <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">Admin Dashboard</h1>
+        <p className="text-gray-400 mt-2">Overview of your expense management system</p>
+        <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 blur-sm -z-10"></div>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="bg-gradient-to-br from-primary/20 to-primary/5">
+        <Card className="bg-gradient-to-br from-indigo-600/20 to-indigo-600/5 hover:from-indigo-500/30 hover:to-indigo-500/10 transition-all transform hover:scale-105">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Total Users</p>
@@ -105,7 +106,7 @@ export const AdminDashboard: React.FC = () => {
           </div>
         </Card>
 
-        <Card className="bg-gradient-to-br from-secondary/20 to-secondary/5">
+        <Card className="bg-gradient-to-br from-purple-600/20 to-purple-600/5 hover:from-purple-500/30 hover:to-purple-500/10 transition-all transform hover:scale-105">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Total Expenses</p>
@@ -117,7 +118,7 @@ export const AdminDashboard: React.FC = () => {
           </div>
         </Card>
 
-        <Card className="bg-gradient-to-br from-warning/20 to-warning/5">
+        <Card className="bg-gradient-to-br from-amber-600/20 to-amber-600/5 hover:from-amber-500/30 hover:to-amber-500/10 transition-all transform hover:scale-105">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Pending</p>
@@ -129,7 +130,7 @@ export const AdminDashboard: React.FC = () => {
           </div>
         </Card>
 
-        <Card className="bg-gradient-to-br from-success/20 to-success/5">
+        <Card className="bg-gradient-to-br from-emerald-600/20 to-emerald-600/5 hover:from-emerald-500/30 hover:to-emerald-500/10 transition-all transform hover:scale-105">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Approved Total</p>

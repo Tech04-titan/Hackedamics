@@ -16,15 +16,15 @@ export const Button: React.FC<ButtonProps> = ({
   disabled,
   ...props
 }) => {
-  const baseClasses = 'font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-dark-bg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2';
+  const baseClasses = 'font-medium rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transform hover:scale-105';
   
   const variantClasses = {
-    primary: 'bg-primary hover:bg-primary-hover text-white focus:ring-primary',
-    secondary: 'bg-secondary hover:bg-secondary-hover text-white focus:ring-secondary',
-    success: 'bg-success hover:bg-success-hover text-white focus:ring-success',
-    danger: 'bg-danger hover:bg-danger-hover text-white focus:ring-danger',
-    outline: 'border-2 border-dark-border hover:border-primary text-gray-300 hover:text-white focus:ring-primary',
-    ghost: 'hover:bg-dark-hover text-gray-300 hover:text-white',
+    primary: 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white focus:ring-indigo-500 shadow-lg shadow-indigo-500/30',
+    secondary: 'bg-gray-600 hover:bg-gray-500 text-white focus:ring-gray-500',
+    success: 'bg-emerald-600 hover:bg-emerald-500 text-white focus:ring-emerald-500',
+    danger: 'bg-red-600 hover:bg-red-500 text-white focus:ring-red-500',
+    outline: 'border-2 border-gray-600 hover:border-indigo-500 text-gray-300 hover:text-white focus:ring-indigo-500',
+    ghost: 'hover:bg-gray-700 text-gray-300 hover:text-white',
   };
   
   const sizeClasses = {

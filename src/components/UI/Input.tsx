@@ -27,9 +27,9 @@ export const Input: React.FC<InputProps> = ({
           </div>
         )}
         <input
-          className={`w-full bg-dark-hover border border-dark-border rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors ${
+          className={`w-full bg-gray-700/50 border border-gray-600/50 rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors ${
             icon ? 'pl-10' : ''
-          } ${error ? 'border-danger' : ''} ${className}`}
+          } ${error ? 'border-red-500' : ''} ${className}`}
           {...props}
         />
       </div>

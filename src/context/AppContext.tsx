@@ -17,9 +17,9 @@ interface AppContextType {
   notifications: Notification[];
   
   // Auth
-  login: (email: string, password: string) => Promise<boolean>;
+  login: (email: string, password: string, role: 'admin' | 'manager' | 'employee') => Promise<boolean>;
   logout: () => void;
-  signup: (name: string, email: string, password: string, country: string) => Promise<boolean>;
+  signup: (name: string, email: string, password: string, country: string, role: 'admin' | 'manager' | 'employee') => Promise<boolean>;
   
   // User Management
   createUser: (user: Omit<User, 'id' | 'createdAt'>) => void;
@@ -105,9 +105,9 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     localStorage.setItem('notifications', JSON.stringify(notifications));
   }, [notifications]);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = async (email: string, password: string, role: 'admin' | 'manager' | 'employee'): Promise<boolean> => {
     // Simple authentication - in production, this would be a real API call
-    const user = users.find(u => u.email === email);
+    const user = users.find(u => u.email === email && u.role === role);
     if (user) {
       setCurrentUser(user);
       return true;
@@ -120,7 +120,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     localStorage.removeItem('currentUser');
   };
 
-  const signup = async (name: string, email: string, password: string, country: string): Promise<boolean> => {
+  const signup = async (name: string, email: string, password: string, country: string, role: 'admin' | 'manager' | 'employee'): Promise<boolean> => {
     try {
       // Fetch currency for selected country
       const response = await fetch('https://restcountries.com/v3.1/all?fields=name,currencies');
@@ -142,12 +142,12 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         createdAt: new Date(),
       };
 
-      // Create admin user
+      // Create new user
       const newUser: User = {
         id: Date.now().toString(),
         name,
         email,
-        role: 'admin',
+        role,
         createdAt: new Date(),
       };
 

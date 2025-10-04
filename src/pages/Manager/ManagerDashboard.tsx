@@ -69,14 +69,15 @@ export const ManagerDashboard: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-white">Manager Dashboard</h1>
-        <p className="text-gray-400 mt-1">Manage team expenses and approvals</p>
+      <div className="relative">
+        <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">Manager Dashboard</h1>
+        <p className="text-gray-400 mt-2">Manage team expenses and approvals</p>
+        <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 blur-sm -z-10"></div>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="bg-gradient-to-br from-warning/20 to-warning/5">
+        <Card className="bg-gradient-to-br from-amber-600/20 to-amber-600/5 hover:from-amber-500/30 hover:to-amber-500/10 transition-all transform hover:scale-105">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Pending Approvals</p>
@@ -88,7 +89,7 @@ export const ManagerDashboard: React.FC = () => {
           </div>
         </Card>
 
-        <Card className="bg-gradient-to-br from-success/20 to-success/5">
+        <Card className="bg-gradient-to-br from-emerald-600/20 to-emerald-600/5 hover:from-emerald-500/30 hover:to-emerald-500/10 transition-all transform hover:scale-105">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Approved</p>
@@ -100,7 +101,7 @@ export const ManagerDashboard: React.FC = () => {
           </div>
         </Card>
 
-        <Card className="bg-gradient-to-br from-danger/20 to-danger/5">
+        <Card className="bg-gradient-to-br from-red-600/20 to-red-600/5 hover:from-red-500/30 hover:to-red-500/10 transition-all transform hover:scale-105">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Rejected</p>
@@ -112,7 +113,7 @@ export const ManagerDashboard: React.FC = () => {
           </div>
         </Card>
 
-        <Card className="bg-gradient-to-br from-accent/20 to-accent/5">
+        <Card className="bg-gradient-to-br from-purple-600/20 to-purple-600/5 hover:from-purple-500/30 hover:to-purple-500/10 transition-all transform hover:scale-105">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Team Members</p>

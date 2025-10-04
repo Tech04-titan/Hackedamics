@@ -15,6 +15,7 @@ export const SignupPage: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [country, setCountry] = useState('');
   const [countries, setCountries] = useState<{ value: string; label: string }[]>([]);
+  const [role, setRole] = useState<'admin' | 'manager' | 'employee'>('employee');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { signup } = useApp();
@@ -56,10 +57,15 @@ export const SignupPage: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const success = await signup(name, email, password, country);
+      const success = await signup(name, email, password, country, role);
       if (success) {
         toast.success('Account created successfully!');
-        setTimeout(() => navigate('/dashboard'), 500);
+        const dashboardRoutes = {
+          admin: '/admin/dashboard',
+          manager: '/manager/dashboard',
+          employee: '/employee/dashboard'
+        };
+        setTimeout(() => navigate(dashboardRoutes[role]), 500);
       } else {
         toast.error('Signup failed. Please try again.');
       }
@@ -104,6 +110,18 @@ export const SignupPage: React.FC = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               icon={<Mail size={20} />}
+              required
+            />
+
+            <Select
+              label="Role"
+              value={role}
+              onChange={(e) => setRole(e.target.value as 'admin' | 'manager' | 'employee')}
+              options={[
+                { value: 'employee', label: 'Employee' },
+                { value: 'manager', label: 'Manager' },
+                { value: 'admin', label: 'Admin' },
+              ]}
               required
             />
 

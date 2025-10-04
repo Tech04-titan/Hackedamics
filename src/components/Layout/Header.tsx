@@ -32,7 +32,7 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick, isSidebarOpen }) =>
   };
 
   return (
-    <header className="bg-dark-card border-b border-dark-border sticky top-0 z-40">
+    <header className="bg-gray-800/70 border-b border-gray-700/50 sticky top-0 z-40 backdrop-blur-lg">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Left side - Logo and Menu */}
@@ -40,16 +40,16 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick, isSidebarOpen }) =>
             {onMenuClick && (
               <button
                 onClick={onMenuClick}
-                className="lg:hidden p-2 rounded-lg hover:bg-dark-hover text-gray-400 hover:text-white transition-colors"
+                className="lg:hidden p-2 rounded-lg hover:bg-gray-700/50 text-gray-400 hover:text-white transition-colors"
               >
                 {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
             )}
             <Link to="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">E</span>
+              <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                <span className="text-white font-bold text-xl">E</span>
               </div>
-              <span className="text-white font-bold text-xl hidden sm:block">ExpenseFlow</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 font-bold text-xl hidden sm:block">ExpenseFlow</span>
             </Link>
           </div>
 
