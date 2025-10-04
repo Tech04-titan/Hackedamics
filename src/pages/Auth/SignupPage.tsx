@@ -15,7 +15,7 @@ export const SignupPage: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [country, setCountry] = useState('');
   const [countries, setCountries] = useState<{ value: string; label: string }[]>([]);
-  const [role, setRole] = useState<'admin' | 'manager' | 'employee'>('employee');
+  const [role, setRole] = useState<'manager' | 'employee'>('employee');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { signup } = useApp();
@@ -116,11 +116,10 @@ export const SignupPage: React.FC = () => {
             <Select
               label="Role"
               value={role}
-              onChange={(e) => setRole(e.target.value as 'admin' | 'manager' | 'employee')}
+              onChange={(e) => setRole(e.target.value as 'manager' | 'employee')}
               options={[
                 { value: 'employee', label: 'Employee' },
-                { value: 'manager', label: 'Manager' },
-                { value: 'admin', label: 'Admin' },
+                { value: 'manager', label: 'Manager' }
               ]}
               required
             />
