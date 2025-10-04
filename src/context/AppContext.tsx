@@ -107,7 +107,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
   const login = async (email: string, password: string, role: 'admin' | 'manager' | 'employee'): Promise<boolean> => {
     // Simple authentication - in production, this would be a real API call
-    const user = users.find(u => u.email === email && u.role === role);
+    const user = users.find((u: User) => u.email === email && u.role === role);
     if (user) {
       setCurrentUser(user);
       return true;
@@ -168,17 +168,17 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       id: Date.now().toString(),
       createdAt: new Date(),
     };
-    setUsers([...users, newUser]);
+    setUsers((prev: User[]) => [...prev, newUser]);
   };
 
   const updateUser = (userId: string, updates: Partial<User>) => {
-    setUsers(users.map(user => 
+    setUsers((prev: User[]) => prev.map((user: User) => 
       user.id === userId ? { ...user, ...updates } : user
     ));
   };
 
   const deleteUser = (userId: string) => {
-    setUsers(users.filter(user => user.id !== userId));
+    setUsers((prev: User[]) => prev.filter((user: User) => user.id !== userId));
   };
 
   const submitExpense = (expenseData: Omit<Expense, 'id' | 'employeeId' | 'employeeName' | 'status' | 'submittedAt' | 'approvalHistory'>) => {
@@ -194,13 +194,19 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       approvalHistory: [],
     };
 
-    // Determine approval flow
-    const user = users.find(u => u.id === currentUser.id);
-    if (user?.managerId && user?.isManagerApprover) {
-      newExpense.currentApproverId = user.managerId;
+
+    // Determine approval flow: assign to the submitter's manager when available.
+    // The previous logic checked `isManagerApprover` on the submitter which is incorrect
+    // (that flag belongs to the manager). Assign to manager if managerId exists.
+    const submitter = users.find((u: User) => u.id === currentUser.id);
+    if (submitter?.managerId) {
+      newExpense.currentApproverId = submitter.managerId;
+      // mark as in_progress when an approver is assigned
+      newExpense.status = 'in_progress';
     }
 
-    setExpenses([...expenses, newExpense]);
+    // Use functional update to avoid stale state issues
+    setExpenses((prev: Expense[]) => [...prev, newExpense]);
 
     // Create notification for approver
     if (newExpense.currentApproverId) {
@@ -214,29 +220,34 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         expenseId: newExpense.id,
         createdAt: new Date(),
       };
-      setNotifications([...notifications, notification]);
+      setNotifications((prev: Notification[]) => [...prev, notification]);
     }
   };
 
   const approveExpense = (expenseId: string, comments?: string) => {
     if (!currentUser) return;
 
-    setExpenses(expenses.map(expense => {
-      if (expense.id === expenseId) {
-        const approvalAction = {
-          id: Date.now().toString(),
-          expenseId,
-          approverId: currentUser.id,
-          approverName: currentUser.name,
-          action: 'approved' as const,
-          comments,
-          timestamp: new Date(),
-          step: expense.approvalHistory.length + 1,
-        };
+    // Find current expense snapshot
+    const expenseToUpdate = expenses.find((e: Expense) => e.id === expenseId);
+    if (!expenseToUpdate) return;
 
+    const approvalAction = {
+      id: Date.now().toString(),
+      expenseId,
+      approverId: currentUser.id,
+      approverName: currentUser.name,
+      action: 'approved' as const,
+      comments,
+      timestamp: new Date(),
+      step: expenseToUpdate.approvalHistory.length + 1,
+    };
+
+    setExpenses((prev: Expense[]) => prev.map((expense: Expense) => {
+      if (expense.id === expenseId) {
         return {
           ...expense,
           status: 'approved' as const,
+          currentApproverId: undefined,
           approvalHistory: [...expense.approvalHistory, approvalAction],
         };
       }
@@ -244,41 +255,43 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     }));
 
     // Create notification for employee
-    const expense = expenses.find(e => e.id === expenseId);
-    if (expense) {
-      const notification: Notification = {
-        id: Date.now().toString(),
-        userId: expense.employeeId,
-        type: 'expense_approved',
-        title: 'Expense Approved',
-        message: `Your expense has been approved by ${currentUser.name}`,
-        isRead: false,
-        expenseId,
-        createdAt: new Date(),
-      };
-      setNotifications([...notifications, notification]);
-    }
+    const notification: Notification = {
+      id: Date.now().toString(),
+      userId: expenseToUpdate.employeeId,
+      type: 'expense_approved',
+      title: 'Expense Approved',
+      message: `Your expense has been approved by ${currentUser.name}`,
+      isRead: false,
+      expenseId,
+      createdAt: new Date(),
+    };
+    setNotifications((prev: Notification[]) => [...prev, notification]);
   };
 
   const rejectExpense = (expenseId: string, comments: string) => {
     if (!currentUser) return;
 
-    setExpenses(expenses.map(expense => {
-      if (expense.id === expenseId) {
-        const approvalAction = {
-          id: Date.now().toString(),
-          expenseId,
-          approverId: currentUser.id,
-          approverName: currentUser.name,
-          action: 'rejected' as const,
-          comments,
-          timestamp: new Date(),
-          step: expense.approvalHistory.length + 1,
-        };
+    // Find current expense snapshot
+    const expenseToUpdate = expenses.find((e: Expense) => e.id === expenseId);
+    if (!expenseToUpdate) return;
 
+    const approvalAction = {
+      id: Date.now().toString(),
+      expenseId,
+      approverId: currentUser.id,
+      approverName: currentUser.name,
+      action: 'rejected' as const,
+      comments,
+      timestamp: new Date(),
+      step: expenseToUpdate.approvalHistory.length + 1,
+    };
+
+    setExpenses((prev: Expense[]) => prev.map((expense: Expense) => {
+      if (expense.id === expenseId) {
         return {
           ...expense,
           status: 'rejected' as const,
+          currentApproverId: undefined,
           approvalHistory: [...expense.approvalHistory, approvalAction],
         };
       }
@@ -286,20 +299,17 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     }));
 
     // Create notification for employee
-    const expense = expenses.find(e => e.id === expenseId);
-    if (expense) {
-      const notification: Notification = {
-        id: Date.now().toString(),
-        userId: expense.employeeId,
-        type: 'expense_rejected',
-        title: 'Expense Rejected',
-        message: `Your expense has been rejected by ${currentUser.name}`,
-        isRead: false,
-        expenseId,
-        createdAt: new Date(),
-      };
-      setNotifications([...notifications, notification]);
-    }
+    const notification: Notification = {
+      id: Date.now().toString(),
+      userId: expenseToUpdate.employeeId,
+      type: 'expense_rejected',
+      title: 'Expense Rejected',
+      message: `Your expense has been rejected by ${currentUser.name}`,
+      isRead: false,
+      expenseId,
+      createdAt: new Date(),
+    };
+    setNotifications((prev: Notification[]) => [...prev, notification]);
   };
 
   const createApprovalRule = (ruleData: Omit<ApprovalRule, 'id' | 'createdAt'>) => {
@@ -308,28 +318,28 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       id: Date.now().toString(),
       createdAt: new Date(),
     };
-    setApprovalRules([...approvalRules, newRule]);
+    setApprovalRules((prev: ApprovalRule[]) => [...prev, newRule]);
   };
 
   const updateApprovalRule = (ruleId: string, updates: Partial<ApprovalRule>) => {
-    setApprovalRules(approvalRules.map(rule => 
+    setApprovalRules((prev: ApprovalRule[]) => prev.map((rule: ApprovalRule) => 
       rule.id === ruleId ? { ...rule, ...updates } : rule
     ));
   };
 
   const deleteApprovalRule = (ruleId: string) => {
-    setApprovalRules(approvalRules.filter(rule => rule.id !== ruleId));
+    setApprovalRules((prev: ApprovalRule[]) => prev.filter((rule: ApprovalRule) => rule.id !== ruleId));
   };
 
   const markNotificationAsRead = (notificationId: string) => {
-    setNotifications(notifications.map(notif => 
+    setNotifications((prev: Notification[]) => prev.map((notif: Notification) => 
       notif.id === notificationId ? { ...notif, isRead: true } : notif
     ));
   };
 
   const markAllNotificationsAsRead = () => {
     if (!currentUser) return;
-    setNotifications(notifications.map(notif => 
+    setNotifications((prev: Notification[]) => prev.map((notif: Notification) => 
       notif.userId === currentUser.id ? { ...notif, isRead: true } : notif
     ));
   };
@@ -357,6 +367,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     markAllNotificationsAsRead,
   };
 
-  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+  return React.createElement(AppContext.Provider, { value }, children);
 };
 
